@@ -573,8 +573,8 @@ epiviz.plugins.charts.LineTrack.prototype._drawLines = function(range, data, del
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(1)
-__webpack_require__(0)
+__webpack_require__(1);
+__webpack_require__(0);
 
 
 /***/ })

@@ -1,1 +1,1 @@
-require('../js/epiviz/ui/web-args-manager.js')
+require('../js/epiviz/ui/web-args-manager.js');
