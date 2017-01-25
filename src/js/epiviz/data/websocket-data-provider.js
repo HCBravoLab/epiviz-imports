@@ -6,6 +6,19 @@
 
 goog.provide('epiviz.data.WebsocketDataProvider');
 
+goog.require('epiviz.utils');
+goog.require('epiviz.data.DataProvider');
+goog.require('epiviz.data.Response');
+goog.require('epiviz.ui.WebArgsManager');
+goog.require('epiviz.data.MessageType');
+goog.require('epiviz.data.Request');
+goog.require('epiviz.measurements.Measurement');
+goog.require('epiviz.measurements.MeasurementSet');
+goog.require('epiviz.ui.controls.VisConfigSelection');
+goog.require('epiviz.events.EventResult');
+goog.require('epiviz.datatypes.GenomicRange');
+goog.require('epiviz.ui.charts.ColorPalette');
+
 /**
  * @param {?string} [id]
  * @param {string} websocketHost
@@ -133,6 +146,7 @@ epiviz.data.WebsocketDataProvider.prototype._onSocketMessage = function (msg) {
    * @type {{requestId: number, type: string, data: *}}
    */
   var message = JSON.parse(msg.data);
+  message.data.dataprovidertype = "websocket";
   if (message['type'] == epiviz.data.MessageType.RESPONSE) {
     var response = epiviz.data.Response.fromRawObject(message);
     var callback = this._callbacks[response.id()];
@@ -190,6 +204,9 @@ epiviz.data.WebsocketDataProvider.prototype._onSocketMessage = function (msg) {
         break;
       case Action.GET_AVAILABLE_CHARTS:
         this._getAvailableCharts(request);
+        break;
+      case Action.LOAD_WORKSPACE:
+        this._loadWorkspace(request);
         break;
     }
   }
@@ -639,3 +656,21 @@ epiviz.data.WebsocketDataProvider.prototype.updateChartSettings = function (requ
   this._callbacks[request.id()] = callback;
   this._sendMessage(message);
 };
+
+
+/**
+ * @param {epiviz.data.Request} request
+ * @private
+ */
+epiviz.data.WebsocketDataProvider.prototype._loadWorkspace = function (request) {
+  var workspaceId = request.get('workspaceId');
+  var result = new epiviz.events.EventResult();
+  this._fireEvent(this.onRequestLoadWorkspace(), {
+    workspace: workspaceId
+  });
+
+  var response = new epiviz.data.Response(request.id(), result);
+  this._sendMessage(JSON.stringify(response.raw()));
+};
+
+// goog.inherits(epiviz.data.WebsocketDataProvider, epiviz.data.DataProvider);

@@ -6,189 +6,191 @@
 
 goog.provide('epiviz.Config');
 
+goog.require('epiviz.ui.WebArgsManager');
+goog.require('epiviz.data.WebsocketDataProvider');
+goog.require('epiviz.data.WebServerDataProvider');
+
 /**
  * @param {*} [settingsMap] A map of settings to override the default settings for the config.
  * @constructor
  */
 epiviz.Config = function(settingsMap) {
 
-    /**
-     * The server storing all the back-end PHP scripts
-     * @type {string}
-     */
-    this.dataServerLocation = null;
+  /**
+   * The server storing all the back-end PHP scripts
+   * @type {string}
+   */
+  this.dataServerLocation = null;
 
-    /**
-     * The path of the php script that handles chart saving, relative to dataServerLocation
-     * @type {string}
-     */
-    this.chartSaverLocation = null;
+  /**
+   * The path of the php script that handles chart saving, relative to dataServerLocation
+   * @type {string}
+   */
+  this.chartSaverLocation = null;
 
-    /**
-     * A number between 0 and 1
-     * @type {number}
-     */
-    this.zoominRatio = null;
+  /**
+   * A number between 0 and 1
+   * @type {number}
+   */
+  this.zoominRatio = null;
 
-    /**
-     * A number greater than 1
-     * @type {number}
-     */
-    this.zoomoutRatio = null;
+  /**
+   * A number greater than 1
+   * @type {number}
+   */
+  this.zoomoutRatio = null;
 
-    /**
-     * A number between 0 and 1
-     * @type {number}
-     */
-    this.navigationStepRatio = null;
+  /**
+   * A number between 0 and 1
+   * @type {number}
+   */
+  this.navigationStepRatio = null;
 
-    /**
-     * The delay in milliseconds between a user command and the command being propagated to the data layer
-     * @type {number}
-     */
-    this.navigationDelay = null;
+  /**
+   * The delay in milliseconds between a user command and the command being propagated to the data layer
+   * @type {number}
+   */
+  this.navigationDelay = null;
 
-    /**
-     * @type {{
-     *    name: string,
-     *    content: {
-     *      range: {seqName: string, start: number, width: number},
-     *      measurements: Array.<{
-              id: string, name: string, type: string, datasourceId: string,
-              datasourceGroup: string, dataprovider: string, formula: null,
-              defaultChartType: string, annotation: ?Object.<string, string>,
-              minValue: ?number, maxValue: ?number,
-              metadata: ?Array.<string>
-            }>,
-     *      charts: Object.<epiviz.ui.charts.VisualizationType.DisplayType, Array.<{
-     *        id: string,
-     *        type: string,
-     *        properties: {
-     *          width: number, height: number, margins: { top: number, left: number, bottom: number, right: number },
-     *          measurements: Array.<number>, colors: Array.<string>, customSettings: Object.<string, string>
-     *        }
-     *      }>>
-     *    }
-     * }}
-     */
-    this.defaultWorkspaceSettings = null;
+  /**
+   * @type {{
+   *    name: string,
+   *    content: {
+   *      range: {seqName: string, start: number, width: number},
+   *      measurements: Array.<{
+            id: string, name: string, type: string, datasourceId: string,
+            datasourceGroup: string, dataprovider: string, formula: null,
+            defaultChartType: string, annotation: ?Object.<string, string>,
+            minValue: ?number, maxValue: ?number,
+            metadata: ?Array.<string>
+          }>,
+   *      charts: Object.<epiviz.ui.charts.VisualizationType.DisplayType, Array.<{
+   *        id: string,
+   *        type: string,
+   *        properties: {
+   *          width: number, height: number, margins: { top: number, left: number, bottom: number, right: number },
+   *          measurements: Array.<number>, colors: Array.<string>, customSettings: Object.<string, string>
+   *        }
+   *      }>>
+   *    }
+   * }}
+   */
+  this.defaultWorkspaceSettings = null;
 
-    /**
-     * An array of strings in the following format:
-     *   [typename],[arguments], where typename is the name of a type that
-     *   extends DataProvider, and arguments is a list of arguments used for
-     *   constructing the data provider, separated by comma.
-     *
-     * @type {Array.<string>}
-     */
-    this.dataProviders = null;
+  /**
+   * An array of strings in the following format:
+   *   [typename],[arguments], where typename is the name of a type that
+   *   extends DataProvider, and arguments is a list of arguments used for
+   *   constructing the data provider, separated by comma.
+   *
+   * @type {Array.<string>}
+   */
+  this.dataProviders = null;
 
-    /**
-     * @type {string}
-     */
-    this.workspacesDataProvider = null;
+  /**
+   * @type {string}
+   */
+  this.workspacesDataProvider = null;
 
-    /**
-     * @type {boolean}
-     */
-    this.useCache = true;
+  /**
+   * @type {boolean}
+   */
+  this.useCache = true;
 
-    /**
-     * @type {string}
-     */
-    this.useCookie = null;
+  /**
+   * @type {string}
+   */
+  this.useCookie = null;
 
-    /**
-     * The time interval used by the cache to clear away unneeded loaded data
-     * @type {number}
-     */
-    this.cacheUpdateIntervalMilliseconds = 30000;
+  /**
+   * The time interval used by the cache to clear away unneeded loaded data
+   * @type {number}
+   */
+  this.cacheUpdateIntervalMilliseconds = 30000;
 
-    /**
-     * The maximum number of search results to show in the gene search box
-     * @type {number}
-     */
-    this.maxSearchResults = null;
+  /**
+   * The maximum number of search results to show in the gene search box
+   * @type {number}
+   */
+  this.maxSearchResults = null;
 
-    /**
-     * @type {Array.<string>}
-     */
-    this.chartTypes = null;
+  /**
+   * @type {Array.<string>}
+   */
+  this.chartTypes = null;
 
-    // Default chart properties: these settings map either generic chart display types (plot or track),
-    // or specific chart types (for example epiviz.plugins.charts.BlocksTrack) to corresponding
-    // configurations.
-    //
-    // Example:
-    // this.chartSettings = {
-    //   plot: { width: 400, height: 100 },
-    //   'epiviz.plugins.charts.GenesTrack': { height: 150 },
-    //   'epiviz.plugins.charts.BlocksTrack': { width: 450, height: 190 }
-    // }
+  // Default chart properties: these settings map either generic chart display types (plot or track),
+  // or specific chart types (for example epiviz.plugins.charts.BlocksTrack) to corresponding
+  // configurations.
+  //
+  // Example:
+  // this.chartSettings = {
+  //   plot: { width: 400, height: 100 },
+  //   'epiviz.plugins.charts.GenesTrack': { height: 150 },
+  //   'epiviz.plugins.charts.BlocksTrack': { width: 450, height: 190 }
+  // }
 
 
-    /**
-     * @type {Object.<epiviz.ui.charts.VisualizationType.DisplayType|string, Object.<epiviz.Config.VisualizationPropertySettings, *>>}
-     */
-    this.chartSettings = null;
+  /**
+   * @type {Object.<epiviz.ui.charts.VisualizationType.DisplayType|string, Object.<epiviz.Config.VisualizationPropertySettings, *>>}
+   */
+  this.chartSettings = null;
 
-    /**
-     * A map of chart type and settings specific to that particular chart type
-     * Example:
-     * this.chartCustomSettings = {
-     *   'epiviz.plugins.charts.LineTrack': {
-     *     maxPoints: 1000
-     *   }
-     * }
-     * @type {Object<string, Object<string, *>>}
-     */
-    this.chartCustomSettings = null;
+  /**
+   * A map of chart type and settings specific to that particular chart type
+   * Example:
+   * this.chartCustomSettings = {
+   *   'epiviz.plugins.charts.LineTrack': {
+   *     maxPoints: 1000
+   *   }
+   * }
+   * @type {Object<string, Object<string, *>>}
+   */
+  this.chartCustomSettings = null;
 
-    /**
-     * @type {{algorithms: Array.<string>, metrics: Array.<string>, linkages: Array.<string>}}
-     */
-    this.clustering = null;
+  /**
+   * @type {{algorithms: Array.<string>, metrics: Array.<string>, linkages: Array.<string>}}
+   */
+  this.clustering = null;
 
-    /**
-     * @type {Array.<epiviz.ui.charts.ColorPalette>}
-     */
-    this.colorPalettes = null;
+  /**
+   * @type {Array.<epiviz.ui.charts.ColorPalette>}
+   */
+  this.colorPalettes = null;
 
-    /**
-     * @type {Object.<string, epiviz.ui.charts.ColorPalette>}
-     */
-    this.colorPalettesMap = null;
+  /**
+   * @type {Object.<string, epiviz.ui.charts.ColorPalette>}
+   */
+  this.colorPalettesMap = null;
 
-    // Override settings included in the given object
-    if (settingsMap) {
-        for (var setting in settingsMap) {
-            if (!settingsMap.hasOwnProperty(setting)) {
-                continue;
-            }
-            this[setting] = settingsMap[setting];
-        }
-
-        // if(settingsMap.configType != 'epivizr_standalone') {
-        //   var socketHosts = epiviz.ui.WebArgsManager.WEB_ARGS['websocket-host'];
-        //   if (socketHosts && socketHosts.length) {
-        //     for (var i = 0; i < socketHosts.length; ++i) {
-        //       this.dataProviders.push(sprintf('epiviz.data.WebsocketDataProvider,%s,%s',
-        //           epiviz.data.WebsocketDataProvider.DEFAULT_ID + '-' + i,
-        //           socketHosts[i]));
-        //     }
-        //   }
-        // }
+  // Override settings included in the given object
+  if (settingsMap) {
+    for (var setting in settingsMap) {
+      if (!settingsMap.hasOwnProperty(setting)) { continue; }
+      this[setting] = settingsMap[setting];
     }
 
-    var colorPalettesMap = {};
-    this.colorPalettes.forEach(function(palette) {
-        colorPalettesMap[palette.id()] = palette;
-    });
-    this.colorPalettesMap = colorPalettesMap;
+    if(settingsMap.configType != 'epivizr_standalone') {
+      var socketHosts = epiviz.ui.WebArgsManager.WEB_ARGS['websocket-host'];
+      if (socketHosts && socketHosts.length) {
+        for (var i = 0; i < socketHosts.length; ++i) {
+          this.dataProviders.push(sprintf('epiviz.data.WebsocketDataProvider,%s,%s',
+              epiviz.data.WebsocketDataProvider.DEFAULT_ID + '-' + i,
+              socketHosts[i]));
+        }
+      }
+    }
+  }
 
-    // if (settingsMap.configType != 'default') {
-    //     this.useCookie = epiviz.ui.WebArgsManager.WEB_ARGS.useCookie;
-    // }
+  var colorPalettesMap = {};
+  this.colorPalettes.forEach(function(palette) {
+    colorPalettesMap[palette.id()] = palette;
+  });
+  this.colorPalettesMap = colorPalettesMap;
+  
+  if(settingsMap.configType != 'default') {
+    this.useCookie = epiviz.ui.WebArgsManager.WEB_ARGS.useCookie;
+  }
 };
 
 /**
@@ -259,9 +261,9 @@ epiviz.Config.COLORS_D3_CAT20C = ["#3182bd", "#6baed6", "#9ecae1", "#c6dbef", "#
  * @enum {string}
  */
 epiviz.Config.VisualizationPropertySettings = {
-    WIDTH: 'width',
-    HEIGHT: 'height',
-    MARGINS: 'margins',
-    COLORS: 'colors',
-    DECORATIONS: 'decorations'
+  WIDTH: 'width',
+  HEIGHT: 'height',
+  MARGINS: 'margins',
+  COLORS: 'colors',
+  DECORATIONS: 'decorations'
 };

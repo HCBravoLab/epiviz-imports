@@ -6,15 +6,25 @@
 
 goog.provide('epiviz.ui.ControlManager');
 
+goog.require('epiviz.utils');
 goog.require('epiviz.Config');
 goog.require('epiviz.events.Event');
-goog.require('epiviz.ui.charts.Chart');
-goog.require('epiviz.ui.charts.ChartFactory');
-goog.require('epiviz.ui.charts.ChartManager');
-goog.require('epiviz.workspaces.WorkspaceManager');
+goog.require('epiviz.ui.controls.DatasourceGroupWizardStep');
 goog.require('epiviz.datatypes.GenomicRange');
+goog.require('epiviz.ui.charts.VisualizationType');
+goog.require('epiviz.ui.controls.VisConfigSelection');
+goog.require('epiviz.ui.controls.MeaurementsWizardStep');
+goog.require('epiviz.ui.controls.Wizard');
+goog.require('epiviz.ui.controls.ComputedMeasurementsDialog');
 goog.require('epiviz.ui.tutorials');
 goog.require('epiviz.ui.PrintManager');
+goog.require('epiviz.ui.controls.MessageDialog');
+goog.require('epiviz.events.EventListener');
+
+// goog.require('epiviz.ui.charts.Chart');
+// goog.require('epiviz.ui.charts.ChartFactory');
+// goog.require('epiviz.ui.charts.ChartManager');
+// goog.require('epiviz.workspaces.WorkspaceManager');
 
 /**
  * @param {epiviz.Config} config
@@ -682,6 +692,8 @@ epiviz.ui.ControlManager.prototype._initializeScreenshotMenu = function() {
   })
   .click( function() {
 
+    self._saveWorkspace.notify({name: name, id: name == self._activeWorkspaceInfo.name ? self._activeWorkspaceInfo.id : null});
+
     savePageButton.append(sprintf('<div id="loading" title="printing workspace">' +
         '<p>Save/Print the existing EpiViz workspace.</p>' +
         '<div style="position:absolute; right:15px;">' +
@@ -703,12 +715,10 @@ epiviz.ui.ControlManager.prototype._initializeScreenshotMenu = function() {
           $(this).dialog('close');
 
           var format = $('.screenshot-file-format option:selected').val();
-
           var timestamp = Math.floor($.now() / 1000);
 
-          //self.printWorkspace('pagemain', "epiviz_" + timestamp, format);
-
-          var pm = new epiviz.ui.PrintManager('pagemain', "epiviz_" + timestamp, format);
+          var workspace_id = self._activeWorkspaceInfo.id;
+          var pm = new epiviz.ui.PrintManager('pagemain', "epiviz_" + timestamp, format, workspace_id);
           pm.print();
 
           $(this).dialog('destroy').remove();
@@ -758,8 +768,8 @@ epiviz.ui.ControlManager.prototype._initializeSearchBox = function() {
     select: function(event, ui) {
       var currentLocation = self._locationManager.lastUnfilledLocationChangeRequest() || self._locationManager.currentLocation();
       var seqName = ui.item.range.seqName();
-      var start = Math.round(ui.item.range.start() + ui.item.range.width() * 0.5 - currentLocation.width() * 0.5);
-      var width = currentLocation.width();
+      var start = Math.round(ui.item.range.start() - ui.item.range.width() * 11);
+      var width = ui.item.range.width() * 22;
       self._updateSelectedLocation(new epiviz.datatypes.GenomicRange(seqName, start, width));
     },
     focus: function(event) {

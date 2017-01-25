@@ -7,7 +7,11 @@
 
 goog.provide('epiviz.plugins.charts.StackedLineTrackType');
 
-goog.require('epiviz.ui.charts.Chart');
+goog.require('epiviz.plugins.charts.StackedLineTrack');
+goog.require('epiviz.ui.charts.TrackType');
+goog.require('epiviz.measurements.Measurement.Type');
+goog.require('epiviz.ui.charts.CustomSetting');
+goog.require('epiviz.ui.charts.Visualization');
 
 /**
  * @param {epiviz.Config} config
@@ -91,7 +95,13 @@ epiviz.plugins.charts.StackedLineTrackType.prototype.customSettingsDefs = functi
       epiviz.ui.charts.CustomSetting.Type.CATEGORICAL,
       'basis',
       'Interpolation',
-      ['linear', 'step-before', 'step-after', 'basis', 'basis-open', 'basis-closed', 'bundle', 'cardinal', 'cardinal-open', 'monotone'])
+      ['linear', 'step-before', 'step-after', 'basis', 'basis-open', 'basis-closed', 'bundle', 'cardinal', 'cardinal-open', 'monotone']),
+    
+    new epiviz.ui.charts.CustomSetting(
+      epiviz.plugins.charts.StackedLineTrackType.CustomSettings.ABS_LINE_VAL,
+      epiviz.ui.charts.CustomSetting.Type.NUMBER,
+      epiviz.ui.charts.CustomSetting.DEFAULT,
+      'Draw abline')
   ]);
 };
 
@@ -101,6 +111,8 @@ epiviz.plugins.charts.StackedLineTrackType.prototype.customSettingsDefs = functi
 epiviz.plugins.charts.StackedLineTrackType.CustomSettings = {
   STEP: 'step',
   OFFSET: 'offset',
-  INTERPOLATION: 'interpolation'
+  INTERPOLATION: 'interpolation',
+  ABS_LINE_VAL: 'abLine'
 };
 
+// goog.inherits(epiviz.plugins.charts.StackedLineTrackType, epiviz.ui.charts.TrackType);

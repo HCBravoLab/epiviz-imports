@@ -6,6 +6,9 @@
 
 goog.provide('epiviz.ui.charts.DataStructureVisualizationType');
 
+goog.require('epiviz.ui.charts.VisualizationType');
+
+
 /**
  * @param {epiviz.Config} config
  * @extends {epiviz.ui.charts.VisualizationType}
@@ -45,3 +48,9 @@ epiviz.ui.charts.DataStructureVisualizationType.prototype.isRestrictedToSameData
  * @returns {boolean}
  */
 epiviz.ui.charts.DataStructureVisualizationType.prototype.hasMeasurements = function() { return false; };
+
+
+epiviz.ui.charts.DataStructureVisualizationType.prototype.customSettingsDefs = function() {
+  var defs = epiviz.ui.charts.VisualizationType.prototype.customSettingsDefs.call(this);
+  return defs;
+};

@@ -6,6 +6,9 @@
 
 goog.provide('epiviz.data.DataProvider');
 
+goog.require('epiviz.events.Event');
+goog.require('epiviz.data.Response');
+
 /**
  * @param {string} id
  * @constructor
@@ -108,6 +111,11 @@ epiviz.data.DataProvider = function(id) {
    */
   this._requestGetAvailableCharts = new epiviz.events.Event();
 
+  /**
+   * @type {epiviz.events.Event.<{result: epiviz.events.EventResult}>}
+   * @private
+   */
+  this._requestLoadWorkspace = new epiviz.events.Event();
 
 };
 
@@ -206,3 +214,8 @@ epiviz.data.DataProvider.prototype.onRequestSetChartSettings = function() { retu
  * @returns {epiviz.events.Event.<{result: epiviz.events.EventResult}>}
  */
 epiviz.data.DataProvider.prototype.onRequestGetAvailableCharts = function() { return this._requestGetAvailableCharts; };
+
+/**
+ * @returns {epiviz.events.Event.<{result: epiviz.events.EventResult}>}
+ */
+epiviz.data.DataProvider.prototype.onRequestLoadWorkspace = function() { return this._requestLoadWorkspace; };

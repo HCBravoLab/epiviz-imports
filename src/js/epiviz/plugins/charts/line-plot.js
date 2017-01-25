@@ -6,6 +6,14 @@
 
 goog.provide('epiviz.plugins.charts.LinePlot');
 
+goog.require('epiviz.ui.charts.Plot');
+goog.require('epiviz.ui.charts.Axis');
+goog.require('epiviz.ui.charts.VisEventArgs');
+goog.require('epiviz.utils');
+goog.require('epiviz.ui.charts.CustomSetting');
+goog.require('epiviz.ui.charts.ChartObject');
+goog.require('epiviz.measurements.Measurement');
+
 /**
  * @param {string} id
  * @param {jQuery} container
@@ -16,8 +24,6 @@ goog.provide('epiviz.plugins.charts.LinePlot');
 epiviz.plugins.charts.LinePlot = function(id, container, properties) {
   // Call superclass constructor
   epiviz.ui.charts.Plot.call(this, id, container, properties);
-
-  this._dispatch = d3.dispatch("hover", "click");
 
   this._initialize();
 };
@@ -145,6 +151,8 @@ epiviz.plugins.charts.LinePlot.prototype._drawLines = function(range, data, xSca
 
   var colLabel = this.customSettingsValues()[epiviz.ui.charts.Visualization.CustomSettings.COL_LABEL];
 
+  var absLine = this.customSettingsValues()[epiviz.plugins.charts.LinePlotType.CustomSettings.ABS_LINE_VAL];
+
   var self = this;
 
   var graph = this._svg.select('.lines');
@@ -244,11 +252,9 @@ epiviz.plugins.charts.LinePlot.prototype._drawLines = function(range, data, xSca
       .style('opacity', '0')
       .on('mouseover', function(d) {
         self._hover.notify(new epiviz.ui.charts.VisEventArgs(self.id(), d));
-        self._dispatch.hover(self.id(), d);
       })
       .on('mouseout', function () {
         self._unhover.notify(new epiviz.ui.charts.VisEventArgs(self.id()));
-        self._dispatch.hover(self.id(), null);
       })
       .each(function(d) {
         d3.select(this)
@@ -396,6 +402,22 @@ epiviz.plugins.charts.LinePlot.prototype._drawLines = function(range, data, xSca
     .style('stroke-width', '0')
     .style('fill', function(label) { return colors.getByKey(label); });
 
+
+// show baseline
+if(absLine != epiviz.ui.charts.CustomSetting.DEFAULT) {
+
+  graph.selectAll('.abLine').remove();
+
+  graph.append("svg:line")
+        .attr("class", "abLine")
+        .attr("x1", 0)
+        .attr("x2", self.width() - self.margins().sumAxis(epiviz.ui.charts.Axis.X))
+        .attr("y1", yScale(absLine))
+        .attr("y2", yScale(absLine))
+        .style("stroke", "black")
+        .style("stroke-dasharray", ("5, 5")) ;
+}
+
   return lineItems;
 };
 
@@ -409,3 +431,5 @@ epiviz.plugins.charts.LinePlot.prototype.colorLabels = function() {
   }
   return labels;
 };
+
+// goog.inherits(epiviz.plugins.charts.LinePlot, epiviz.ui.charts.Plot);

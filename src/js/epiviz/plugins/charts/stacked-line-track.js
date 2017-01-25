@@ -7,6 +7,13 @@
 
 goog.provide('epiviz.plugins.charts.StackedLineTrack');
 
+goog.require('epiviz.ui.charts.Track');
+goog.require('epiviz.ui.charts.Axis');
+goog.require('epiviz.ui.charts.ChartObject');
+goog.require('epiviz.ui.charts.VisEventArgs');
+goog.require('epiviz.utils');
+goog.require('epiviz.datatypes.GenomicRange');
+
 /**
  * @param {string} id
  * @param {jQuery} container
@@ -17,7 +24,7 @@ goog.provide('epiviz.plugins.charts.StackedLineTrack');
 epiviz.plugins.charts.StackedLineTrack = function(id, container, properties) {
   // Call superclass constructor
   epiviz.ui.charts.Track.call(this, id, container, properties);
-  this._dispatch = d3.dispatch("hover", "click");
+
   this._initialize();
 };
 
@@ -85,6 +92,8 @@ epiviz.plugins.charts.StackedLineTrack.prototype._drawLines = function(range, da
 
   /** @type {string} */
   var offset = this.customSettingsValues()[epiviz.plugins.charts.StackedLineTrackType.CustomSettings.OFFSET];
+
+  var absLine = this.customSettingsValues()[epiviz.plugins.charts.LinePlotType.CustomSettings.ABS_LINE_VAL];
 
   var self = this;
 
@@ -204,11 +213,9 @@ epiviz.plugins.charts.StackedLineTrack.prototype._drawLines = function(range, da
     .style('shape-rendering', 'auto')
     .style('stroke-width', '0')
     .style('fill', function(d, i) { return colors.get(i); })
-    .on('mouseover', function() { self._captureMouseHover(); self._dispatch.hover(self.id(), null)})
-    .on('mousemove', function() { self._captureMouseHover(); self._dispatch.hover(self.id(), null)})
-    .on('mouseout', function () { self._unhover.notify(new epiviz.ui.charts.VisEventArgs(self.id())); 
-                   self._dispatch.hover(self.id(), null);
-    });
+    .on('mouseover', function() { self._captureMouseHover(); })
+    .on('mousemove', function() { self._captureMouseHover(); })
+    .on('mouseout', function () { self._unhover.notify(new epiviz.ui.charts.VisEventArgs(self.id())); });
 
   lines
     .attr('d', area)
@@ -218,6 +225,24 @@ epiviz.plugins.charts.StackedLineTrack.prototype._drawLines = function(range, da
     .duration(500)
     .attr('transform', 'translate(' + (0) + ')');
 
+  // show baseline
+  if(absLine != epiviz.ui.charts.CustomSetting.DEFAULT) {
+
+    graph.selectAll('.abLine').remove();
+
+    graph.append("svg:line")
+          .attr("class", "abLine")
+          .attr("x1", 0)
+          .attr("x2", self.width() - self.margins().sumAxis(epiviz.ui.charts.Axis.X))
+          .attr("y1", yScale(absLine))
+          .attr("y2", yScale(absLine))
+          .style("stroke", "black")
+          .style("stroke-dasharray", ("5, 5")) ;
+  }
+
+
+
   return items;
 };
 
+// goog.inherits(epiviz.plugins.charts.StackedLineTrack, epiviz.plugins.charts.Track);
