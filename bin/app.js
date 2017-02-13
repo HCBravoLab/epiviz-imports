@@ -69,26 +69,6 @@ var epiviz =
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
-module.exports = __webpack_amd_options__;
-
-/* WEBPACK VAR INJECTION */}.call(exports, {}))
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(5).epiviz;
-
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function() {
@@ -9371,7 +9351,132 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;!function() {
 }();
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+/**
+sprintf() for JavaScript 0.6
+
+Copyright (c) Alexandru Marasteanu <alexaholic [at) gmail (dot] com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of sprintf() for JavaScript nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL Alexandru Marasteanu BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Changelog:
+2007.04.03 - 0.1:
+ - initial release
+2007.09.11 - 0.2:
+ - feature: added argument swapping
+2007.09.17 - 0.3:
+ - bug fix: no longer throws exception on empty paramenters (Hans Pufal)
+2007.10.21 - 0.4:
+ - unit test and patch (David Baird)
+2010.05.09 - 0.5:
+ - bug fix: 0 is now preceeded with a + sign
+ - bug fix: the sign was not at the right position on padded results (Kamal Abdali)
+ - switched from GPL to BSD license
+2010.05.22 - 0.6:
+ - reverted to 0.4 and fixed the bug regarding the sign of the number 0
+ Note:
+ Thanks to Raphael Pigulla <raph (at] n3rd [dot) org> (http://www.n3rd.org/)
+ who warned me about a bug in 0.5, I discovered that the last update was
+ a regress. I appologize for that.
+**/
+
+function str_repeat(i, m) {
+	for (var o = []; m > 0; o[--m] = i);
+	return o.join('');
+}
+
+/**
+ * @returns {string}
+ */
+function sprintf() {
+	var i = 0, a, f = arguments[i++], o = [], m, p, c, x, s = '';
+	while (f) {
+		if (m = /^[^\x25]+/.exec(f)) {
+			o.push(m[0]);
+		}
+		else if (m = /^\x25{2}/.exec(f)) {
+			o.push('%');
+		}
+		else if (m = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(f)) {
+			if (((a = arguments[m[1] || i++]) == null) || (a == undefined)) {
+				throw('Too few arguments.');
+			}
+			if (/[^s]/.test(m[7]) && (typeof(a) != 'number')) {
+				throw('Expecting number but found ' + typeof(a));
+			}
+			switch (m[7]) {
+				case 'b': a = a.toString(2); break;
+				case 'c': a = String.fromCharCode(a); break;
+				case 'd': a = parseInt(a); break;
+				case 'e': a = m[6] ? a.toExponential(m[6]) : a.toExponential(); break;
+				case 'f': a = m[6] ? parseFloat(a).toFixed(m[6]) : parseFloat(a); break;
+				case 'o': a = a.toString(8); break;
+				case 's': a = ((a = String(a)) && m[6] ? a.substring(0, m[6]) : a); break;
+				case 'u': a = Math.abs(a); break;
+				case 'x': a = a.toString(16); break;
+				case 'X': a = a.toString(16).toUpperCase(); break;
+			}
+			a = (/[def]/.test(m[7]) && m[2] && a >= 0 ? '+'+ a : a);
+			c = m[3] ? m[3] == '0' ? '0' : m[3].charAt(1) : ' ';
+			x = m[5] - String(a).length - s.length;
+			p = m[5] ? str_repeat(c, x) : '';
+			o.push(s + (m[4] ? a + p : p + a));
+		}
+		else {
+			throw('Huh ?!');
+		}
+		f = f.substring(m[0].length);
+	}
+	return o.join('');
+}
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
+module.exports = __webpack_amd_options__;
+
+/* WEBPACK VAR INJECTION */}.call(exports, {}))
+
+/***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(5).epiviz;
+
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -18809,7 +18914,7 @@ window.jQuery = window.$ = jQuery;
 // file names, and jQuery is normally delivered in a lowercase file name.
 // Do this after creating the global so that if an AMD module wants to call
 // noConflict to hide this version of jQuery, it will work.
-if ( "function" === "function" && __webpack_require__(0) && __webpack_require__(0).jQuery ) {
+if ( "function" === "function" && __webpack_require__(2) && __webpack_require__(2).jQuery ) {
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () { return jQuery; }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 }
@@ -18818,115 +18923,10 @@ if ( "function" === "function" && __webpack_require__(0) && __webpack_require__(
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-/**
-sprintf() for JavaScript 0.6
-
-Copyright (c) Alexandru Marasteanu <alexaholic [at) gmail (dot] com>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of sprintf() for JavaScript nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Alexandru Marasteanu BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-Changelog:
-2007.04.03 - 0.1:
- - initial release
-2007.09.11 - 0.2:
- - feature: added argument swapping
-2007.09.17 - 0.3:
- - bug fix: no longer throws exception on empty paramenters (Hans Pufal)
-2007.10.21 - 0.4:
- - unit test and patch (David Baird)
-2010.05.09 - 0.5:
- - bug fix: 0 is now preceeded with a + sign
- - bug fix: the sign was not at the right position on padded results (Kamal Abdali)
- - switched from GPL to BSD license
-2010.05.22 - 0.6:
- - reverted to 0.4 and fixed the bug regarding the sign of the number 0
- Note:
- Thanks to Raphael Pigulla <raph (at] n3rd [dot) org> (http://www.n3rd.org/)
- who warned me about a bug in 0.5, I discovered that the last update was
- a regress. I appologize for that.
-**/
-
-function str_repeat(i, m) {
-	for (var o = []; m > 0; o[--m] = i);
-	return o.join('');
-}
-
-/**
- * @returns {string}
- */
-function sprintf() {
-	var i = 0, a, f = arguments[i++], o = [], m, p, c, x, s = '';
-	while (f) {
-		if (m = /^[^\x25]+/.exec(f)) {
-			o.push(m[0]);
-		}
-		else if (m = /^\x25{2}/.exec(f)) {
-			o.push('%');
-		}
-		else if (m = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(f)) {
-			if (((a = arguments[m[1] || i++]) == null) || (a == undefined)) {
-				throw('Too few arguments.');
-			}
-			if (/[^s]/.test(m[7]) && (typeof(a) != 'number')) {
-				throw('Expecting number but found ' + typeof(a));
-			}
-			switch (m[7]) {
-				case 'b': a = a.toString(2); break;
-				case 'c': a = String.fromCharCode(a); break;
-				case 'd': a = parseInt(a); break;
-				case 'e': a = m[6] ? a.toExponential(m[6]) : a.toExponential(); break;
-				case 'f': a = m[6] ? parseFloat(a).toFixed(m[6]) : parseFloat(a); break;
-				case 'o': a = a.toString(8); break;
-				case 's': a = ((a = String(a)) && m[6] ? a.substring(0, m[6]) : a); break;
-				case 'u': a = Math.abs(a); break;
-				case 'x': a = a.toString(16); break;
-				case 'X': a = a.toString(16).toUpperCase(); break;
-			}
-			a = (/[def]/.test(m[7]) && m[2] && a >= 0 ? '+'+ a : a);
-			c = m[3] ? m[3] == '0' ? '0' : m[3].charAt(1) : ' ';
-			x = m[5] - String(a).length - s.length;
-			p = m[5] ? str_repeat(c, x) : '';
-			o.push(s + (m[4] ? a + p : p + a));
-		}
-		else {
-			throw('Huh ?!');
-		}
-		f = f.substring(m[0].length);
-	}
-	return o.join('');
-}
-
-
-/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var $jscomp={scope:{}};$jscomp.defineProperty="function"==typeof Object.defineProperties?Object.defineProperty:function(a,b,c){if(c.get||c.set)throw new TypeError("ES3 does not support getters and setters.");a!=Array.prototype&&a!=Object.prototype&&(a[b]=c.value)};$jscomp.getGlobal=function(a){return"undefined"!=typeof window&&window===a?a:"undefined"!=typeof global&&null!=global?global:a};$jscomp.global=$jscomp.getGlobal(this);$jscomp.SYMBOL_PREFIX="jscomp_symbol_";
+/* WEBPACK VAR INJECTION */(function(global, d3, sprintf) {var $jscomp={scope:{}};$jscomp.defineProperty="function"==typeof Object.defineProperties?Object.defineProperty:function(a,b,c){if(c.get||c.set)throw new TypeError("ES3 does not support getters and setters.");a!=Array.prototype&&a!=Object.prototype&&(a[b]=c.value)};$jscomp.getGlobal=function(a){return"undefined"!=typeof window&&window===a?a:"undefined"!=typeof global&&null!=global?global:a};$jscomp.global=$jscomp.getGlobal(this);$jscomp.SYMBOL_PREFIX="jscomp_symbol_";
 $jscomp.initSymbol=function(){$jscomp.initSymbol=function(){};$jscomp.global.Symbol||($jscomp.global.Symbol=$jscomp.Symbol)};$jscomp.symbolCounter_=0;$jscomp.Symbol=function(a){return $jscomp.SYMBOL_PREFIX+(a||"")+$jscomp.symbolCounter_++};
 $jscomp.initSymbolIterator=function(){$jscomp.initSymbol();var a=$jscomp.global.Symbol.iterator;a||(a=$jscomp.global.Symbol.iterator=$jscomp.global.Symbol("iterator"));"function"!=typeof Array.prototype[a]&&$jscomp.defineProperty(Array.prototype,a,{configurable:!0,writable:!0,value:function(){return $jscomp.arrayIterator(this)}});$jscomp.initSymbolIterator=function(){}};$jscomp.arrayIterator=function(a){var b=0;return $jscomp.iteratorPrototype(function(){return b<a.length?{done:!1,value:a[b++]}:{done:!0}})};
 $jscomp.iteratorPrototype=function(a){$jscomp.initSymbolIterator();a={next:a};a[$jscomp.global.Symbol.iterator]=function(){return this};return a};$jscomp.array=$jscomp.array||{};$jscomp.iteratorFromArray=function(a,b){$jscomp.initSymbolIterator();a instanceof String&&(a+="");var c=0,d={next:function(){if(c<a.length){var e=c++;return{value:b(e,a[e]),done:!1}}d.next=function(){return{done:!0,value:void 0}};return d.next()}};d[Symbol.iterator]=function(){return d};return d};
@@ -19831,7 +19831,7 @@ epiviz.workspaces.WorkspaceManager.prototype._registerComputedMeasurementRemoved
 epiviz.workspaces.UserManager.prototype._login=function(){var a=window.location.toString();0<a.length&&(a=encodeURIComponent(a));window.location=this._config.dataServerLocation+"login.php?location="+a};epiviz.workspaces.UserManager.prototype._logout=function(){var a=window.location.toString();0<a.length&&(a=encodeURIComponent(a));window.location=this._config.dataServerLocation+"logout.php?logout&location="+a};epiviz.main=function(){var a=new epiviz.Config(epiviz.Config.SETTINGS),b=new epiviz.ui.LocationManager(a),c=new epiviz.measurements.MeasurementsManager,d=new epiviz.ui.charts.ChartFactory(a),e=new epiviz.ui.charts.ChartManager(a),f=new epiviz.ui.ControlManager(a,d,e,c,b),g=new epiviz.data.DataProviderFactory(a),g=new epiviz.data.DataManager(a,g),h;"false"==a.useCookie?(h=new epiviz.localstorage.LocalStorageManager(epiviz.localstorage.LocalStorageManager.MODE.INCOGNITO_MODE),h.clearWorkspace(),a.defaultWorkspaceSettings.content.charts=
 null):h=new epiviz.localstorage.LocalStorageManager(epiviz.localstorage.LocalStorageManager.MODE.COOKIE_MODE);var m=new epiviz.workspaces.WorkspaceManager(a,b,c,e,d),l=new epiviz.workspaces.UserManager(a),n=new epiviz.ui.WebArgsManager(b,m),b=new epiviz.EpiViz(a,b,c,f,g,d,e,m,l,n,h);epiviz.ui.charts.transform.clustering.ClusteringAlgorithmFactory.initialize(a);b.start()};goog.exportSymbol("epiviz",epiviz);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
 /* 6 */
@@ -19867,10 +19867,10 @@ module.exports = g;
 "use strict";
 
 
-var jquery = __webpack_require__(3);
-var d3 = __webpack_require__(2);
-var sprintf = __webpack_require__(4);
-var epiviz = __webpack_require__(1);
+var jquery = __webpack_require__(4);
+var d3 = __webpack_require__(0);
+var sprintf = __webpack_require__(1);
+var epiviz = __webpack_require__(3);
 
 // exports['epiviz'] = epiviz;
 
