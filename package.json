@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/hcbravolab/epiviz-imports/issues"
   },
-  "homepage": "https://github.com/hcbravolab/epiviz-imports#readme"
+  "homepage": "https://github.com/hcbravolab/epiviz-imports#readme",
+  "dependencies": {
+    "sprintf": "^0.1.5"
+  }
 }
