@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/hcbravolab/epiviz-imports#readme",
   "dependencies": {
+    "epiviz": "git+https://github.com/epiviz/epiviz-library.git",
     "sprintf": "^0.1.5"
   }
 }
