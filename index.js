@@ -10,5 +10,5 @@ module.exports = {
     epiviz : epiviz
 };
 
-window.sprintf = sprintf;
-window.epiviz = epiviz;
+// window.sprintf = sprintf;
+// window.epiviz = epiviz;

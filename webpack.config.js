@@ -6,7 +6,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'bin'),
     filename: 'app.js',
-    libraryTarget: 'umd',
+    libraryTarget: 'window',
     library: ''
   }
 //   externals: {
