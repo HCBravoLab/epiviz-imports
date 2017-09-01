@@ -1,14 +1,25 @@
 var path = require('path');
 var webpack = require('webpack');
 
-module.exports = {
-  entry: './index.js',
-  output: {
-    path: path.resolve(__dirname, 'bin'),
-    filename: 'app.js',
-    libraryTarget: 'window',
-    library: ''
+module.exports = [
+  {
+    entry: './index.js',
+    output: {
+      path: path.resolve(__dirname, 'bin'),
+      filename: 'app.js',
+      libraryTarget: 'window',
+      library: ''
+    }
+  }, {
+    entry: './index_no_jQuery.js',
+    output: {
+      path: path.resolve(__dirname, 'bin'),
+      filename: 'app_no_jQuery.js',
+      libraryTarget: 'window',
+      library: ''
+    }
   }
+]
 //   externals: {
 //     jquery: path.resolve(__dirname, './src/js/lib/jquery/jquery-1.8.2.js'),
 //     d3: path.resolve(__dirname, './src/js/lib/d3/d3.v3.js'),
@@ -21,4 +32,4 @@ module.exports = {
 //       sprintf: path.resolve(__dirname, './src/js/lib/sprintf-0.6.js')
 //     })
 //   ]
-};
+// };
