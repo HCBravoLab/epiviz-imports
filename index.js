@@ -1,6 +1,6 @@
 'use strict';
 
-var jquery = require('./src/js/lib/jquery/jquery-1.8.2.js');
+var jquery = require('./src/js/jquery/jquery.js');
 var d3 = require('d3');
 var sprintf = require('sprintf');
 var epiviz = require('epiviz');
