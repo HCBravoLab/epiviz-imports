@@ -25,7 +25,10 @@
   "homepage": "https://github.com/hcbravolab/epiviz-imports#readme",
   "dependencies": {
     "d3": "^3.5.17",
-    "epiviz": "git+https://github.com/epiviz/epiviz-library.git",
+    "epiviz": "git+https://github.com/epiviz/epiviz-library.git#epiviz-5",
     "sprintf": "^0.1.5"
+  },
+  "devDependencies": {
+    "webpack": "^3.10.0"
   }
 }

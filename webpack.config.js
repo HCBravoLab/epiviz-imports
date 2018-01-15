@@ -11,10 +11,18 @@ module.exports = [
       library: ''
     }
   }, {
-    entry: './index_no_jQuery.js',
+    entry: './index.min.js',
     output: {
       path: path.resolve(__dirname, 'bin'),
-      filename: 'app_no_jQuery.js',
+      filename: 'app.min.js',
+      libraryTarget: 'window',
+      library: ''
+    }
+  }, {
+    entry: './index.deps.js',
+    output: {
+      path: path.resolve(__dirname, 'bin'),
+      filename: 'app.deps.js',
       libraryTarget: 'window',
       library: ''
     }
